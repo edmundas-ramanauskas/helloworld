@@ -1,10 +1,14 @@
 package com.ibm.test.hello;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
 /**
  * Created by edmundas on 16.5.17.
@@ -12,12 +16,19 @@ import java.nio.file.Paths;
 @Service
 public class KittyServiceImpl implements KittyService {
 
-    private static final String FILE_PATH = "static/hellokitty.jpg";
+    private final Logger logger = LoggerFactory.getLogger(KittyServiceImpl.class);
+
+    @Value("classpath:static/hellokitty.jpg")
+    private Resource kittyFile;
 
     @Override
     public byte[] getKitty() throws IOException {
-        // TODO: implement caching
-        return Files.readAllBytes(Paths.get(
-                getClass().getClassLoader().getResource(FILE_PATH).getFile()));
+        // This InputStream based solution is required in case of JAR packaging
+        InputStream inputStream = kittyFile.getInputStream();
+        byte[] bytes = new byte[inputStream.available()];
+        // If DataInputStream isn't used - only partial image is returned
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
+        dataInputStream.readFully(bytes);
+        return bytes;
     }
 }
