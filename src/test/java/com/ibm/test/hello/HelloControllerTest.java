@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HelloControllerTest {
 
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
+    private static final String JSON_PATH = "$.message";
 
     @Autowired
     private WebApplicationContext wac;
@@ -43,6 +45,22 @@ public class HelloControllerTest {
         this.mockMvc.perform(get("/helloworld").accept(MediaType.parseMediaType(CONTENT_TYPE)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(jsonPath("$.message").value("Hello World !"));
+                .andExpect(jsonPath(JSON_PATH).value("Hello World !"));
+    }
+
+    @Test
+    public void testHello() throws Exception {
+        this.mockMvc.perform(post("/hello").accept(MediaType.parseMediaType(CONTENT_TYPE)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath(JSON_PATH).value("Hello World !"));
+    }
+
+    @Test
+    public void testHelloWithName() throws Exception {
+        this.mockMvc.perform(post("/hello?name=Developer").accept(MediaType.parseMediaType(CONTENT_TYPE)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath(JSON_PATH).value("Hello Developer !"));
     }
 }
