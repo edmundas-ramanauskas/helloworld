@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 @RestController
 public class HelloController {
+    // TODO: add error handling
 
     private final Logger logger = LoggerFactory.getLogger(HelloController.class);
 
@@ -38,7 +39,7 @@ public class HelloController {
 
     @RequestMapping(value = "/hello", method = RequestMethod.POST)
     public HelloModel hello(@RequestParam(value="name", defaultValue=DEFAULT_NAME) String name) {
-        logger.info("POST /hello");
+        logger.info("POST /hello {}", name);
         return helloService.sayHello(name);
     }
 
