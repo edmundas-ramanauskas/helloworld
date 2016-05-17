@@ -1,10 +1,13 @@
 package com.ibm.test.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 /**
  * Created by edmundas on 16.5.17.
@@ -15,10 +18,12 @@ public class HelloController {
     private static final String DEFAULT_NAME = "World";
 
     private HelloService helloService;
+    private KittyService kittyService;
 
     @Autowired
-    public HelloController(HelloService helloService) {
+    public HelloController(HelloService helloService, KittyService kittyService) {
         this.helloService = helloService;
+        this.kittyService = kittyService;
     }
 
     @RequestMapping(value = "/helloworld", method = RequestMethod.GET)
@@ -29,5 +34,10 @@ public class HelloController {
     @RequestMapping(value = "/hello", method = RequestMethod.POST)
     public HelloModel hello(@RequestParam(value="name", defaultValue=DEFAULT_NAME) String name) {
         return helloService.sayHello(name);
+    }
+
+    @RequestMapping(value = "/hellokitty", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] helloKitty() throws IOException {
+        return kittyService.getKitty();
     }
 }
